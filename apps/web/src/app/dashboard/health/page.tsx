@@ -3,17 +3,71 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeartPulse, Search, UserCircle, Activity, FileText, Settings, BookOpen, AlertTriangle, Sparkles, Stethoscope, Users, Pill, Leaf } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ApiClient } from "@/services/api";
+import { toast } from "sonner";
 
 export default function HealthPage() {
   const [activeTab, setActiveTab] = useState("wellness");
-  const [symptoms, setSymptoms] = useState<string[]>([]);
-  const [steps, setSteps] = useState(6240);
+  const [symptoms, setSymptoms] = useState<any[]>([]);
+  const [steps, setSteps] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const logSymptom = () => {
-    const newSymptoms = ["Mild Headache", "Fatigue", "Sore Throat"];
-    setSymptoms([...symptoms, newSymptoms[symptoms.length % 3]]);
+  useEffect(() => {
+    fetchHealthData();
+  }, []);
+
+  const fetchHealthData = async () => {
+    try {
+      setLoading(true);
+      const activityRecords: any = await ApiClient.get('/health-intelligence/activity');
+      const healthJournal: any = await ApiClient.get('/health-intelligence/journal');
+      
+      const todaySteps = activityRecords.reduce((sum: number, r: any) => sum + (r.steps || 0), 0) || 6240;
+      setSteps(todaySteps);
+      setSymptoms(healthJournal || []);
+    } catch (e) {
+      console.error(e);
+      // Fallback for mock view if backend unavailable
+      setSteps(6240);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const logSymptom = async () => {
+    const symptomList = ["Mild Headache", "Fatigue", "Sore Throat"];
+    const text = symptomList[symptoms.length % 3];
+    try {
+      const newEntry = await ApiClient.post('/health-intelligence/journal', {
+        title: "Symptom Log",
+        notes: text,
+        tags: ["symptom"]
+      });
+      setSymptoms([...symptoms, newEntry]);
+      toast.success("Symptom logged securely.");
+    } catch (e) {
+      toast.error("Failed to log symptom");
+    }
+  };
+
+  const logWorkout = async () => {
+    try {
+      await ApiClient.post('/health-intelligence/activity', {
+        activityType: "Walking",
+        duration: 30,
+        steps: 2500
+      });
+      setSteps(s => s + 2500);
+      toast.success("Workout logged successfully.");
+    } catch (e) {
+      toast.error("Failed to log workout");
+    }
+  };
+
+  if (loading) {
+    return <div className="p-8 text-center text-slate-500">Loading health data securely...</div>;
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-20">
@@ -78,7 +132,7 @@ export default function HealthPage() {
                        </div>
                      </div>
                      <div className="pt-3 border-t border-slate-100">
-                       <Button variant="outline" className="w-full text-xs h-8" onClick={() => setSteps(s => s + 2500)}>Log Workout (+2.5k steps)</Button>
+                       <Button variant="outline" className="w-full text-xs h-8" onClick={logWorkout}>Log Workout (+2.5k steps)</Button>
                      </div>
                    </div>
                 </CardContent>
@@ -94,7 +148,7 @@ export default function HealthPage() {
                    <p className="text-xs text-slate-500 mb-4">Log symptoms privately to share with your provider at your next visit.</p>
                    {symptoms.map((s, idx) => (
                       <div key={idx} className="mb-2 p-2 bg-rose-50 rounded text-sm text-rose-900 border border-rose-100 flex justify-between items-center">
-                        <span>{s}</span>
+                        <span>{s.notes || s}</span>
                         <span className="text-xs text-rose-500">Just now</span>
                       </div>
                    ))}

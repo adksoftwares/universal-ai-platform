@@ -4,20 +4,41 @@
  * Provides a clean interface for the frontend to communicate with the NestJS backend.
  */
 
+import { auth } from '@/lib/firebase';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export class ApiClient {
   private static async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    let token = '';
+    let userId = '';
+    
+    if (auth.currentUser) {
+      try {
+        token = await auth.currentUser.getIdToken();
+        userId = auth.currentUser.uid;
+      } catch (e) {
+        console.warn('Failed to get Firebase token', e);
+      }
+    }
+
     const headers = {
       'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...(userId ? { 'x-user-id': userId } : {}),
       ...options.headers,
-      // Authorization token would be injected here
     };
 
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
       
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          // If unauthorized, could redirect to login here if running in browser
+          if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
+          }
+        }
         throw new Error(`API Error: ${response.status} ${response.statusText}`);
       }
       
