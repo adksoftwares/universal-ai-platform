@@ -1,0 +1,184 @@
+import { CareerTrackerService } from './career-tracker.service.js';
+export declare class CareerTrackerController {
+    private readonly careerTrackerService;
+    constructor(careerTrackerService: CareerTrackerService);
+    private extractUserId;
+    getWorkExperiences(userId: string): import(".prisma/client").Prisma.PrismaPromise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        role: string;
+        startDate: Date;
+        endDate: Date | null;
+        achievements: string | null;
+        employer: string;
+        responsibilities: string | null;
+    }[]>;
+    getWorkExperienceById(userId: string, id: string): import(".prisma/client").Prisma.Prisma__WorkExperienceClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        role: string;
+        startDate: Date;
+        endDate: Date | null;
+        achievements: string | null;
+        employer: string;
+        responsibilities: string | null;
+    } | null, null, import("@prisma/client/runtime/library").DefaultArgs>;
+    createWorkExperience(userId: string, data: any): import(".prisma/client").Prisma.Prisma__WorkExperienceClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        role: string;
+        startDate: Date;
+        endDate: Date | null;
+        achievements: string | null;
+        employer: string;
+        responsibilities: string | null;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs>;
+    updateWorkExperience(userId: string, id: string, data: any): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    deleteWorkExperience(userId: string, id: string): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    getCertifications(userId: string): import(".prisma/client").Prisma.PrismaPromise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        name: string;
+        provider: string;
+        dateObtained: Date | null;
+        expiryDate: Date | null;
+        credentialId: string | null;
+    }[]>;
+    getCertificationById(userId: string, id: string): import(".prisma/client").Prisma.Prisma__CertificationClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        name: string;
+        provider: string;
+        dateObtained: Date | null;
+        expiryDate: Date | null;
+        credentialId: string | null;
+    } | null, null, import("@prisma/client/runtime/library").DefaultArgs>;
+    createCertification(userId: string, data: any): import(".prisma/client").Prisma.Prisma__CertificationClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        name: string;
+        provider: string;
+        dateObtained: Date | null;
+        expiryDate: Date | null;
+        credentialId: string | null;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs>;
+    updateCertification(userId: string, id: string, data: any): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    deleteCertification(userId: string, id: string): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    getGeneratedResumes(userId: string): import(".prisma/client").Prisma.PrismaPromise<{
+        id: string;
+        title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        content: string;
+        targetRole: string | null;
+    }[]>;
+    getGeneratedResumeById(userId: string, id: string): import(".prisma/client").Prisma.Prisma__GeneratedResumeClient<{
+        id: string;
+        title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        content: string;
+        targetRole: string | null;
+    } | null, null, import("@prisma/client/runtime/library").DefaultArgs>;
+    createGeneratedResume(userId: string, data: any): import(".prisma/client").Prisma.Prisma__GeneratedResumeClient<{
+        id: string;
+        title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        content: string;
+        targetRole: string | null;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs>;
+    updateGeneratedResume(userId: string, id: string, data: any): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    deleteGeneratedResume(userId: string, id: string): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    getJobOpportunities(userId: string): import(".prisma/client").Prisma.PrismaPromise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        status: string;
+        deadline: Date | null;
+        url: string | null;
+        location: string | null;
+        company: string;
+        position: string;
+        workType: string | null;
+        salary: string | null;
+    }[]>;
+    getJobOpportunityById(userId: string, id: string): import(".prisma/client").Prisma.Prisma__JobOpportunityClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        status: string;
+        deadline: Date | null;
+        url: string | null;
+        location: string | null;
+        company: string;
+        position: string;
+        workType: string | null;
+        salary: string | null;
+    } | null, null, import("@prisma/client/runtime/library").DefaultArgs>;
+    createJobOpportunity(userId: string, data: any): import(".prisma/client").Prisma.Prisma__JobOpportunityClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        status: string;
+        deadline: Date | null;
+        url: string | null;
+        location: string | null;
+        company: string;
+        position: string;
+        workType: string | null;
+        salary: string | null;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs>;
+    updateJobOpportunity(userId: string, id: string, data: any): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    deleteJobOpportunity(userId: string, id: string): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    getJobApplications(userId: string): import(".prisma/client").Prisma.PrismaPromise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        notes: string | null;
+        status: string;
+        opportunityId: string;
+        appliedAt: Date;
+    }[]>;
+    getJobApplicationById(userId: string, id: string): import(".prisma/client").Prisma.Prisma__JobApplicationClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        notes: string | null;
+        status: string;
+        opportunityId: string;
+        appliedAt: Date;
+    } | null, null, import("@prisma/client/runtime/library").DefaultArgs>;
+    createJobApplication(userId: string, data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        notes: string | null;
+        status: string;
+        opportunityId: string;
+        appliedAt: Date;
+    }>;
+    updateJobApplication(userId: string, id: string, data: any): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+    deleteJobApplication(userId: string, id: string): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
+}

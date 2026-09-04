@@ -1,0 +1,13 @@
+{
+  "common": {
+    "welcome": "Welcome to Universal AI",
+    "dashboard": "Dashboard",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading..."
+  },
+  "onboarding": {
+    "title": "Welcome to Universal AI",
+    "subtitle": "Your personal digital assistant for life."
+  }
+}

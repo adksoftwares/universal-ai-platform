@@ -1,0 +1,263 @@
+import { PrismaService } from '../prisma.service.js';
+import { Prisma } from '@prisma/client';
+export declare class CommunicationService {
+    private prisma;
+    constructor(prisma: PrismaService);
+    createContact(userId: string, data: Prisma.ContactCreateWithoutUserInput): Promise<{
+        id: string;
+        category: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        name: string;
+        notes: string | null;
+        role: string | null;
+        location: string | null;
+        phone: string | null;
+        email: string | null;
+        organization: string | null;
+        lastInteraction: Date | null;
+    }>;
+    findAllContacts(userId: string): Promise<({
+        importantDates: {
+            id: string;
+            title: string;
+            createdAt: Date;
+            updatedAt: Date;
+            date: Date;
+            type: string;
+            contactId: string;
+        }[];
+    } & {
+        id: string;
+        category: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        name: string;
+        notes: string | null;
+        role: string | null;
+        location: string | null;
+        phone: string | null;
+        email: string | null;
+        organization: string | null;
+        lastInteraction: Date | null;
+    })[]>;
+    findContactById(userId: string, id: string): Promise<{
+        importantDates: {
+            id: string;
+            title: string;
+            createdAt: Date;
+            updatedAt: Date;
+            date: Date;
+            type: string;
+            contactId: string;
+        }[];
+    } & {
+        id: string;
+        category: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        name: string;
+        notes: string | null;
+        role: string | null;
+        location: string | null;
+        phone: string | null;
+        email: string | null;
+        organization: string | null;
+        lastInteraction: Date | null;
+    }>;
+    updateContact(userId: string, id: string, data: Prisma.ContactUpdateWithoutUserInput): Promise<{
+        id: string;
+        category: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        name: string;
+        notes: string | null;
+        role: string | null;
+        location: string | null;
+        phone: string | null;
+        email: string | null;
+        organization: string | null;
+        lastInteraction: Date | null;
+    }>;
+    deleteContact(userId: string, id: string): Promise<{
+        id: string;
+        category: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        name: string;
+        notes: string | null;
+        role: string | null;
+        location: string | null;
+        phone: string | null;
+        email: string | null;
+        organization: string | null;
+        lastInteraction: Date | null;
+    }>;
+    createCommunication(userId: string, data: Prisma.CommunicationRecordUncheckedCreateInput): Promise<{
+        subject: string | null;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        date: Date;
+        status: string;
+        provider: string;
+        contactId: string | null;
+        direction: string;
+        contentSummary: string | null;
+    }>;
+    findAllCommunications(userId: string): Promise<{
+        subject: string | null;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        date: Date;
+        status: string;
+        provider: string;
+        contactId: string | null;
+        direction: string;
+        contentSummary: string | null;
+    }[]>;
+    findCommunicationById(userId: string, id: string): Promise<{
+        subject: string | null;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        date: Date;
+        status: string;
+        provider: string;
+        contactId: string | null;
+        direction: string;
+        contentSummary: string | null;
+    }>;
+    updateCommunication(userId: string, id: string, data: Prisma.CommunicationRecordUpdateWithoutUserInput): Promise<{
+        subject: string | null;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        date: Date;
+        status: string;
+        provider: string;
+        contactId: string | null;
+        direction: string;
+        contentSummary: string | null;
+    }>;
+    deleteCommunication(userId: string, id: string): Promise<{
+        subject: string | null;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        date: Date;
+        status: string;
+        provider: string;
+        contactId: string | null;
+        direction: string;
+        contentSummary: string | null;
+    }>;
+    createMeeting(userId: string, data: Prisma.MeetingRecordCreateWithoutUserInput): Promise<{
+        id: string;
+        title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        notes: string | null;
+        date: Date;
+        status: string;
+        location: string | null;
+        agenda: string | null;
+        summary: string | null;
+    }>;
+    findAllMeetings(userId: string): Promise<({
+        participants: {
+            id: string;
+            category: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
+            name: string;
+            notes: string | null;
+            role: string | null;
+            location: string | null;
+            phone: string | null;
+            email: string | null;
+            organization: string | null;
+            lastInteraction: Date | null;
+        }[];
+    } & {
+        id: string;
+        title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        notes: string | null;
+        date: Date;
+        status: string;
+        location: string | null;
+        agenda: string | null;
+        summary: string | null;
+    })[]>;
+    findMeetingById(userId: string, id: string): Promise<{
+        participants: {
+            id: string;
+            category: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
+            name: string;
+            notes: string | null;
+            role: string | null;
+            location: string | null;
+            phone: string | null;
+            email: string | null;
+            organization: string | null;
+            lastInteraction: Date | null;
+        }[];
+    } & {
+        id: string;
+        title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        notes: string | null;
+        date: Date;
+        status: string;
+        location: string | null;
+        agenda: string | null;
+        summary: string | null;
+    }>;
+    updateMeeting(userId: string, id: string, data: Prisma.MeetingRecordUpdateWithoutUserInput): Promise<{
+        id: string;
+        title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        notes: string | null;
+        date: Date;
+        status: string;
+        location: string | null;
+        agenda: string | null;
+        summary: string | null;
+    }>;
+    deleteMeeting(userId: string, id: string): Promise<{
+        id: string;
+        title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        notes: string | null;
+        date: Date;
+        status: string;
+        location: string | null;
+        agenda: string | null;
+        summary: string | null;
+    }>;
+}
