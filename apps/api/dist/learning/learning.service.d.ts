@@ -11,8 +11,8 @@ export declare class LearningService {
                 createdAt: Date;
                 updatedAt: Date;
                 status: string;
-                learningPlanId: string;
                 order: number;
+                learningPlanId: string;
             }[];
         } & {
             id: string;
@@ -43,8 +43,8 @@ export declare class LearningService {
                 createdAt: Date;
                 updatedAt: Date;
                 status: string;
-                learningPlanId: string;
                 order: number;
+                learningPlanId: string;
             }[];
         } & {
             id: string;
@@ -75,8 +75,8 @@ export declare class LearningService {
                 createdAt: Date;
                 updatedAt: Date;
                 status: string;
-                learningPlanId: string;
                 order: number;
+                learningPlanId: string;
             }[];
         } & {
             id: string;
@@ -107,8 +107,8 @@ export declare class LearningService {
                 createdAt: Date;
                 updatedAt: Date;
                 status: string;
-                learningPlanId: string;
                 order: number;
+                learningPlanId: string;
             }[];
         } & {
             id: string;

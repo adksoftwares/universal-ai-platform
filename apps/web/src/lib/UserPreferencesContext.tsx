@@ -58,8 +58,6 @@ export const UserPreferencesProvider = ({ children }: { children: React.ReactNod
     }
   };
 
-  if (!isLoaded) return null;
-
   return (
     <UserPreferencesContext.Provider value={{ preferences, setCountry }}>
       {children}

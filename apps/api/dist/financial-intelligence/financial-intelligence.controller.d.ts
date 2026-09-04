@@ -56,8 +56,8 @@ export declare class FinancialIntelligenceController {
         userId: string;
         currency: string;
         currentValue: number | null;
-        accountId: string | null;
         quantity: number;
+        accountId: string | null;
         assetSymbol: string;
         purchasePrice: number;
     }>;
@@ -68,8 +68,8 @@ export declare class FinancialIntelligenceController {
         userId: string;
         currency: string;
         currentValue: number | null;
-        accountId: string | null;
         quantity: number;
+        accountId: string | null;
         assetSymbol: string;
         purchasePrice: number;
     }[]>;
@@ -80,8 +80,8 @@ export declare class FinancialIntelligenceController {
         userId: string;
         currency: string;
         currentValue: number | null;
-        accountId: string | null;
         quantity: number;
+        accountId: string | null;
         assetSymbol: string;
         purchasePrice: number;
     } | null>;
@@ -92,8 +92,8 @@ export declare class FinancialIntelligenceController {
         userId: string;
         currency: string;
         currentValue: number | null;
-        accountId: string | null;
         quantity: number;
+        accountId: string | null;
         assetSymbol: string;
         purchasePrice: number;
     }>;
@@ -104,8 +104,8 @@ export declare class FinancialIntelligenceController {
         userId: string;
         currency: string;
         currentValue: number | null;
-        accountId: string | null;
         quantity: number;
+        accountId: string | null;
         assetSymbol: string;
         purchasePrice: number;
     }>;

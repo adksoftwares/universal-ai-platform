@@ -16,8 +16,8 @@ export declare class HouseholdIntelligenceService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        country: string | null;
         address: string | null;
+        country: string | null;
         timeZone: string | null;
     }[]>;
     getHouseholdById(userId: string, householdId: string): Promise<({
@@ -35,8 +35,8 @@ export declare class HouseholdIntelligenceService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        country: string | null;
         address: string | null;
+        country: string | null;
         timeZone: string | null;
     }) | null>;
     createHousehold(userId: string, data: any): Promise<{
@@ -44,8 +44,8 @@ export declare class HouseholdIntelligenceService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        country: string | null;
         address: string | null;
+        country: string | null;
         timeZone: string | null;
     }>;
     getChores(userId: string, householdId: string): Promise<{
