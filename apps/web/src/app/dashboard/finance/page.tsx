@@ -1,41 +1,55 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Wallet, Plus, TrendingUp, TrendingDown, Receipt, Target, BellRing, Sparkles, Building, Link2, CreditCard, AlertTriangle, ShieldCheck, Calculator, PieChart, Coins, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
 import { useUserPreferences } from "@/lib/UserPreferencesContext";
 import { COUNTRY_DATA } from "@/lib/countryData";
 import { toast } from "sonner";
+import { ApiClient } from "@/services/api";
 
 export default function FinancePage() {
   const { preferences, setCountry } = useUserPreferences();
-  // Using global currency now instead of local state
 
   const formatMoney = (amount: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: preferences.currency }).format(amount);
   };
 
-  const [accounts, setAccounts] = useState([
-    { name: "Checking Account", institution: "Chase", type: "Bank", balance: 4502.50, updated: "Just now" },
-    { name: "Emergency Savings", institution: "Ally", type: "Bank", balance: 12000.00, updated: "2 hrs ago" },
-    { name: "Rewards Credit", institution: "Amex", type: "Credit", balance: -840.25, updated: "1 hr ago" }
-  ]);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [bills, setBills] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [bills, setBills] = useState([
-    { id: 1, name: "Electricity Utility", amount: 85.50, due: "Due Tomorrow", paid: false }
-  ]);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [accs, subs] = await Promise.all([
+          ApiClient.get('/finance-intelligence/accounts'),
+          ApiClient.get('/finance-intelligence/subscriptions')
+        ]);
+        setAccounts((accs as any[]) || []);
+        setBills((subs as any[]) || []);
+      } catch (err) {
+        toast.error("Failed to load financial data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   const [fraudAlert, setFraudAlert] = useState(true);
 
-  const handlePayBill = (id: number, amount: number) => {
-    setBills(bills.map(b => b.id === id ? { ...b, paid: true } : b));
-    setAccounts(accounts.map(acc => 
-      acc.name === "Checking Account" ? { ...acc, balance: acc.balance - amount } : acc
-    ));
-    toast.success("Bill Paid", { description: `Successfully paid ${formatMoney(amount)} from Checking Account.` });
+  const handlePayBill = async (id: string, amount: number) => {
+    try {
+      await ApiClient.put(`/finance-intelligence/subscriptions/${id}`, { status: 'paid' });
+      setBills(bills.map(b => b.id === id ? { ...b, status: 'paid' } : b));
+      toast.success("Bill Paid", { description: `Successfully paid ${formatMoney(amount)}.` });
+    } catch (e) {
+      toast.error("Failed to pay bill");
+    }
   };
 
   const handleFlagFraud = () => {
@@ -51,43 +65,46 @@ export default function FinancePage() {
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [txAmount, setTxAmount] = useState("");
   const [txDesc, setTxDesc] = useState("");
-  const [txAccount, setTxAccount] = useState("Checking Account");
+  const [txAccount, setTxAccount] = useState("");
   const [txType, setTxType] = useState("Expense");
 
-  const submitTransaction = () => {
+  useEffect(() => {
+    if (accounts.length > 0 && !txAccount) {
+      setTxAccount(accounts[0].id);
+    }
+  }, [accounts, txAccount]);
+
+  const submitTransaction = async () => {
     if (!txAmount || isNaN(Number(txAmount))) {
       toast.error("Invalid amount");
       return;
     }
     const amt = Number(txAmount);
+    const acc = accounts.find(a => a.id === txAccount || a.name === txAccount);
+    if (!acc) {
+      toast.error("Please select an account");
+      return;
+    }
     
-    setAccounts(accounts.map(acc => {
-      if (acc.name === txAccount) {
-        // If it's an expense, balance goes down (or debt goes up for credit)
-        // If it's income, balance goes up
-        const isExpense = txType === "Expense";
-        const newBalance = isExpense ? acc.balance - amt : acc.balance + amt;
-        return { ...acc, balance: newBalance };
-      }
-      return acc;
-    }));
+    const isExpense = txType === "Expense";
+    const newBalance = isExpense ? acc.balance - amt : acc.balance + amt;
 
-    toast.success("Transaction Added", { description: `Successfully logged ${formatMoney(amt)} to ${txAccount}.` });
-    setIsTxModalOpen(false);
-    setTxAmount("");
-    setTxDesc("");
+    try {
+      await ApiClient.put(`/finance-intelligence/accounts/${acc.id}`, { balance: newBalance });
+      setAccounts(accounts.map(a => a.id === acc.id ? { ...a, balance: newBalance } : a));
+      toast.success("Transaction Added", { description: `Successfully logged ${formatMoney(amt)} to ${acc.name}.` });
+      setIsTxModalOpen(false);
+      setTxAmount("");
+      setTxDesc("");
+    } catch (e) {
+      toast.error("Failed to add transaction");
+    }
   };
 
   const netWorth = {
-    assets: accounts.filter(a => a.type === "Bank").reduce((sum, a) => sum + a.balance, 0),
-    liabilities: Math.abs(accounts.filter(a => a.type === "Credit").reduce((sum, a) => sum + a.balance, 0)),
+    assets: accounts.filter(a => a.type === "Bank" || a.type === "Investment" || a.balance > 0).reduce((sum, a) => sum + (a.balance > 0 ? a.balance : 0), 0),
+    liabilities: Math.abs(accounts.filter(a => a.type === "Credit" || a.balance < 0).reduce((sum, a) => sum + (a.balance < 0 ? a.balance : 0), 0)),
     get total() { return this.assets - this.liabilities; }
-  };
-
-  const cashFlow = {
-    starting: 4502.50,
-    expectedIncome: 3200.00,
-    expectedExpenses: 2100.00,
   };
 
   const budget = [
@@ -117,12 +134,14 @@ export default function FinancePage() {
               <option key={code} value={code}>{code} ({data.symbol})</option>
             ))}
           </select>
-          <Button variant="outline" className="flex-1 sm:flex-none border-slate-200 bg-white text-slate-700" onClick={() => toast("Bank Sync", { description: "Plaid integration mock opened." })}>
+          <Button variant="outline" className="flex-1 sm:flex-none border-slate-200 bg-white text-slate-700">
             <Link2 className="w-4 h-4 mr-2" /> Link Bank
           </Button>
             <Dialog open={isTxModalOpen} onOpenChange={setIsTxModalOpen}>
-              <DialogTrigger render={<Button className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700" />}>
-                <Plus className="w-4 h-4 mr-2" /> Add Transaction
+              <DialogTrigger asChild>
+                 <Button className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700">
+                   <Plus className="w-4 h-4 mr-2" /> Add Transaction
+                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -158,7 +177,7 @@ export default function FinancePage() {
                       className="col-span-3 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       value={txAccount} onChange={e => setTxAccount(e.target.value)}
                     >
-                      {accounts.map(acc => <option key={acc.name}>{acc.name}</option>)}
+                      {accounts.map(acc => <option key={acc.id} value={acc.id}>{acc.name}</option>)}
                     </select>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -210,29 +229,37 @@ export default function FinancePage() {
           </Card>
 
           {/* Accounts Overview */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {accounts.map((acc, i) => (
-              <Card key={i} className="border-slate-200 shadow-sm relative overflow-hidden transition-all duration-300">
-                <div className={`absolute top-0 left-0 w-1 h-full ${acc.type === 'Credit' ? 'bg-rose-500' : 'bg-emerald-500'}`}></div>
-                <CardContent className="p-4 pl-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold uppercase tracking-wider">
-                      {acc.type === 'Credit' ? <CreditCard className="w-3.5 h-3.5" /> : <Building className="w-3.5 h-3.5" />}
-                      {acc.institution}
+          {loading ? (
+             <p className="text-sm text-slate-500">Loading accounts...</p>
+          ) : accounts.length === 0 ? (
+             <div className="p-6 border border-dashed border-slate-300 rounded-lg text-center text-slate-500">
+               No accounts connected. Link your bank or add an account manually.
+             </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {accounts.map((acc, i) => (
+                <Card key={i} className="border-slate-200 shadow-sm relative overflow-hidden transition-all duration-300">
+                  <div className={`absolute top-0 left-0 w-1 h-full ${acc.type === 'Credit' || acc.balance < 0 ? 'bg-rose-500' : 'bg-emerald-500'}`}></div>
+                  <CardContent className="p-4 pl-5">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                        {acc.type === 'Credit' ? <CreditCard className="w-3.5 h-3.5" /> : <Building className="w-3.5 h-3.5" />}
+                        {acc.institution || acc.type}
+                      </div>
                     </div>
-                  </div>
-                  <h3 className="font-bold text-slate-800 text-sm mb-1">{acc.name}</h3>
-                  <p className={`text-xl font-black ${acc.balance < 0 ? 'text-rose-600' : 'text-slate-900'}`}>
-                    {formatMoney(Math.abs(acc.balance))}
-                    {acc.balance < 0 && <span className="text-xs font-normal text-rose-500 ml-1">owed</span>}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-2 flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-emerald-500" /> Synced {acc.updated}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                    <h3 className="font-bold text-slate-800 text-sm mb-1">{acc.name}</h3>
+                    <p className={`text-xl font-black ${acc.balance < 0 ? 'text-rose-600' : 'text-slate-900'}`}>
+                      {formatMoney(Math.abs(acc.balance))}
+                      {acc.balance < 0 && <span className="text-xs font-normal text-rose-500 ml-1">owed</span>}
+                    </p>
+                    <p className="text-[10px] text-slate-400 mt-2 flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-emerald-500" /> Synced {new Date(acc.updatedAt || Date.now()).toLocaleDateString()}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
 
           {/* AI Financial Analysis & Fraud Alert */}
           {fraudAlert && (
@@ -287,7 +314,7 @@ export default function FinancePage() {
                   </div>
                 </div>
               ))}
-              <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => toast("Budget Creation", { description: "Budget creation flow started." })}>Create New Budget</Button>
+              <Button size="sm" variant="outline" className="w-full text-xs">Create New Budget</Button>
             </CardContent>
           </Card>
 
@@ -295,20 +322,28 @@ export default function FinancePage() {
           <Card className="border-slate-200 shadow-sm">
             <CardHeader className="pb-3 border-b border-slate-100 flex flex-row justify-between items-center">
               <CardTitle className="text-base font-bold text-slate-800 flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-slate-500" /> Upcoming Bills
+                <Receipt className="w-4 h-4 text-slate-500" /> Upcoming Subscriptions/Bills
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
                <div className="divide-y divide-slate-100">
-                 {bills.map((bill) => (
-                   <div key={bill.id} className={`p-4 flex justify-between items-center transition-colors ${bill.paid ? 'bg-slate-50 opacity-60' : 'hover:bg-slate-50'}`}>
+                 {loading ? (
+                   <p className="text-xs p-4 text-center text-slate-500">Loading bills...</p>
+                 ) : bills.length === 0 ? (
+                   <div className="p-4 text-center text-slate-500 text-sm">
+                     No upcoming bills found.
+                   </div>
+                 ) : bills.map((bill) => (
+                   <div key={bill.id} className={`p-4 flex justify-between items-center transition-colors ${bill.status === 'paid' ? 'bg-slate-50 opacity-60' : 'hover:bg-slate-50'}`}>
                      <div>
-                       <p className={`font-semibold text-sm ${bill.paid ? 'text-slate-500 line-through' : 'text-slate-900'}`}>{bill.name}</p>
-                       <p className={`text-xs font-bold mt-0.5 ${bill.paid ? 'text-emerald-600' : 'text-rose-500'}`}>{bill.paid ? 'Paid' : bill.due}</p>
+                       <p className={`font-semibold text-sm ${bill.status === 'paid' ? 'text-slate-500 line-through' : 'text-slate-900'}`}>{bill.service || bill.name}</p>
+                       <p className={`text-xs font-bold mt-0.5 ${bill.status === 'paid' ? 'text-emerald-600' : 'text-rose-500'}`}>
+                         {bill.status === 'paid' ? 'Paid' : new Date(bill.nextBillingDate).toLocaleDateString()}
+                       </p>
                      </div>
                      <div className="text-right flex flex-col items-end gap-1">
-                       <span className={`font-bold ${bill.paid ? 'text-slate-500' : 'text-slate-900'}`}>{formatMoney(bill.amount)}</span>
-                       {!bill.paid ? (
+                       <span className={`font-bold ${bill.status === 'paid' ? 'text-slate-500' : 'text-slate-900'}`}>{formatMoney(bill.amount)}</span>
+                       {bill.status !== 'paid' ? (
                          <Button size="sm" className="h-6 text-[10px] px-2 bg-slate-900" onClick={() => handlePayBill(bill.id, bill.amount)}>Pay Now</Button>
                        ) : (
                          <div className="flex items-center text-[10px] font-bold text-emerald-600 mt-1"><CheckCircle2 className="w-3 h-3 mr-1"/> Settled</div>

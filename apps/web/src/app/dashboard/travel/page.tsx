@@ -1,20 +1,33 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plane, Plus, MapPin, CalendarDays, Wallet, Clock, ListChecks, FileText, Search, Map, ShieldAlert, Sparkles, Navigation } from "lucide-react";
+import { ApiClient } from "@/services/api";
 
 export default function TravelPage() {
-  const itinerary = [
-    { day: "Day 1 - Oct 10", time: "14:00", activity: "Hotel Check-in", location: "Shinjuku, Tokyo" },
-    { day: "Day 1 - Oct 10", time: "18:00", activity: "Dinner in Shibuya", location: "Shibuya Crossing" },
-    { day: "Day 2 - Oct 11", time: "09:00", activity: "Meiji Shrine Visit", location: "Harajuku" },
-  ];
+  const [itinerary, setItinerary] = useState<any[]>([]);
+  const [savedPlaces, setSavedPlaces] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const savedPlaces = [
-    { name: "Tsukiji Outer Market", category: "Food & Dining", rating: "4.8" },
-    { name: "Tokyo Skytree", category: "Attraction", rating: "4.6" }
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [bookings, places] = await Promise.all([
+          ApiClient.get('/travel-intelligence/bookings'),
+          ApiClient.get('/travel-intelligence/saved-places')
+        ]);
+        setItinerary((bookings as any[]) || []);
+        setSavedPlaces((places as any[]) || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-20">
@@ -93,17 +106,25 @@ export default function TravelPage() {
                 <h3 className="font-bold text-slate-800 flex items-center gap-2"><MapPin className="w-4 h-4 text-emerald-500" /> Saved Places</h3>
              </div>
              <CardContent className="p-0">
-               <div className="divide-y divide-slate-100">
-                 {savedPlaces.map((place, i) => (
-                   <div key={i} className="p-4 hover:bg-slate-50 flex justify-between items-center">
-                     <div>
-                       <p className="font-semibold text-sm text-slate-900">{place.name}</p>
-                       <p className="text-xs text-slate-500 mt-0.5">{place.category}</p>
+               {loading ? (
+                 <p className="text-xs p-4 text-center text-slate-500">Loading saved places...</p>
+               ) : savedPlaces.length === 0 ? (
+                 <div className="p-4 text-center text-slate-500 text-sm">
+                   No saved places. Try saving some locations from the map.
+                 </div>
+               ) : (
+                 <div className="divide-y divide-slate-100">
+                   {savedPlaces.map((place, i) => (
+                     <div key={i} className="p-4 hover:bg-slate-50 flex justify-between items-center">
+                       <div>
+                         <p className="font-semibold text-sm text-slate-900">{place.name}</p>
+                         <p className="text-xs text-slate-500 mt-0.5">{place.category}</p>
+                       </div>
+                       {place.rating && <span className="text-xs font-bold bg-emerald-50 text-emerald-700 px-2 py-1 rounded">★ {place.rating}</span>}
                      </div>
-                     <span className="text-xs font-bold bg-emerald-50 text-emerald-700 px-2 py-1 rounded">★ {place.rating}</span>
-                   </div>
-                 ))}
-               </div>
+                   ))}
+                 </div>
+               )}
                <div className="p-4 border-t border-slate-100 bg-slate-50/50">
                  <div className="relative">
                    <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
@@ -127,22 +148,29 @@ export default function TravelPage() {
             </div>
             <CardContent className="p-6">
               <div className="relative border-l-2 border-slate-100 ml-3 space-y-8 pb-4">
-                
-                {itinerary.map((item, idx) => (
-                  <div key={idx} className="relative pl-6">
-                    <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-white border-2 border-sky-400"></div>
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-1">
-                      <h4 className="font-semibold text-slate-800">{item.activity}</h4>
-                      <span className="text-xs font-semibold text-sky-600 bg-sky-50 px-2 py-1 rounded self-start">
-                        {item.day}
-                      </span>
+                {loading ? (
+                   <p className="text-sm text-slate-500 ml-4">Loading itinerary...</p>
+                ) : itinerary.length === 0 ? (
+                   <div className="p-6 text-center text-slate-500 ml-4 border border-dashed rounded-lg">
+                     No flights booked or itinerary items found.
+                   </div>
+                ) : (
+                  itinerary.map((item, idx) => (
+                    <div key={idx} className="relative pl-6">
+                      <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-white border-2 border-sky-400"></div>
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-1">
+                        <h4 className="font-semibold text-slate-800">{item.provider} - {item.type}</h4>
+                        <span className="text-xs font-semibold text-sky-600 bg-sky-50 px-2 py-1 rounded self-start">
+                          {item.startDate ? new Date(item.startDate).toLocaleDateString() : 'TBD'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-slate-500 mt-2">
+                        {item.startDate && <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-slate-400" /> {new Date(item.startDate).toLocaleTimeString()}</span>}
+                        <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-slate-400" /> {item.destination || item.origin || 'Location pending'}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-slate-500 mt-2">
-                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-slate-400" /> {item.time} JST</span>
-                      <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-slate-400" /> {item.location}</span>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
                 
               </div>
               
