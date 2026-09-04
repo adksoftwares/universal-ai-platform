@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-3.6-flash",
       systemInstruction:
         "You are a helpful personal AI assistant. You help users with tasks, reminders, learning, finance, health, travel, and daily life. Be concise, friendly, and helpful.",
     });

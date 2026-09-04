@@ -126,7 +126,7 @@ export default function AIAssistantPage() {
         <div className="h-14 border-b border-slate-100 flex items-center justify-between px-6 bg-white shrink-0">
           <div>
             <h2 className="font-semibold text-slate-800">AI Assistant</h2>
-            <p className="text-xs text-green-500 font-medium">● Connected · Gemini 2.0 Flash</p>
+            <p className="text-xs text-green-500 font-medium">● Connected · Gemini 3.6 Flash</p>
           </div>
           <Button variant="ghost" size="icon" className="text-slate-400">
             <Settings className="w-5 h-5" />
