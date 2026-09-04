@@ -32,6 +32,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ reply: text });
   } catch (err: any) {
     console.error("Gemini error:", err);
-    return NextResponse.json({ error: "Failed to get AI response." }, { status: 500 });
+    return NextResponse.json({ 
+      error: err.message || "Failed to get AI response.",
+      details: err.toString()
+    }, { status: 500 });
   }
 }

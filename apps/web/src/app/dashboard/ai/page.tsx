@@ -49,7 +49,7 @@ export default function AIAssistantPage() {
         setMessages([...updatedMessages, {
           id: Date.now() + 1,
           role: "assistant",
-          content: "Sorry, something went wrong. Please try again.",
+          content: `Error: ${data.error} ${data.details ? `(${data.details})` : ""}`,
         }]);
       } else {
         setMessages([...updatedMessages, {
