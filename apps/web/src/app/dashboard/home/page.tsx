@@ -4,20 +4,33 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Home, Users, CheckSquare, ShoppingCart, Wrench, ShieldAlert, Package, Calendar, Sparkles, Clock } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("overview");
 
-  const chores = [
-    { name: "Take out recycling", assignee: "Alex", schedule: "Weekly - Tuesday", status: "Pending" },
-    { name: "Vacuum living room", assignee: "Sam", schedule: "Weekly - Friday", status: "Done" },
-  ];
+  const [chores, setChores] = useState([
+    { id: 1, name: "Take out recycling", assignee: "Alex", schedule: "Weekly - Tuesday", status: "Pending" },
+    { id: 2, name: "Vacuum living room", assignee: "Sam", schedule: "Weekly - Friday", status: "Done" },
+  ]);
 
-  const shopping = [
-    { item: "Oat Milk", category: "Groceries", quantity: 2 },
-    { item: "Dish Soap", category: "Supplies", quantity: 1 },
-    { item: "Apples", category: "Groceries", quantity: 6 },
-  ];
+  const [shopping, setShopping] = useState([
+    { id: 1, item: "Oat Milk", category: "Groceries", quantity: 2, checked: false },
+    { id: 2, item: "Dish Soap", category: "Supplies", quantity: 1, checked: false },
+    { id: 3, item: "Apples", category: "Groceries", quantity: 6, checked: false },
+  ]);
+
+  const toggleChore = (id: number) => {
+    setChores(chores.map(c => c.id === id ? { ...c, status: c.status === "Done" ? "Pending" : "Done" } : c));
+  };
+
+  const toggleShopping = (id: number) => {
+    setShopping(shopping.map(s => s.id === id ? { ...s, checked: !s.checked } : s));
+  };
+
+  const handleQuickAction = (action: string) => {
+    toast.success(`${action} opened`, { description: `Interactive modal for ${action.toLowerCase()} would open here.` });
+  };
 
   const maintenance = [
     { task: "HVAC Filter Replacement", nextService: "Nov 15, 2027", provider: "Self" },
@@ -130,9 +143,9 @@ export default function HomePage() {
                   <CardTitle className="text-sm font-bold text-slate-800">Household Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 space-y-2">
-                  <Button variant="outline" className="w-full justify-start text-slate-600"><CheckSquare className="w-4 h-4 mr-2" /> Add Chore</Button>
-                  <Button variant="outline" className="w-full justify-start text-slate-600"><ShoppingCart className="w-4 h-4 mr-2" /> Add to Shopping List</Button>
-                  <Button variant="outline" className="w-full justify-start text-slate-600"><Package className="w-4 h-4 mr-2" /> Log Inventory Item</Button>
+                  <Button variant="outline" className="w-full justify-start text-slate-600" onClick={() => handleQuickAction("Add Chore")}><CheckSquare className="w-4 h-4 mr-2" /> Add Chore</Button>
+                  <Button variant="outline" className="w-full justify-start text-slate-600" onClick={() => handleQuickAction("Shopping List")}><ShoppingCart className="w-4 h-4 mr-2" /> Add to Shopping List</Button>
+                  <Button variant="outline" className="w-full justify-start text-slate-600" onClick={() => handleQuickAction("Log Inventory")}><Package className="w-4 h-4 mr-2" /> Log Inventory Item</Button>
                 </CardContent>
               </Card>
             </div>
@@ -152,7 +165,7 @@ export default function HomePage() {
                 <CardContent className="p-0">
                   <div className="divide-y divide-slate-100">
                     {chores.map((chore, i) => (
-                      <div key={i} className="p-4 flex items-center justify-between hover:bg-slate-50">
+                      <div key={i} className="p-4 flex items-center justify-between hover:bg-slate-50 cursor-pointer" onClick={() => toggleChore(chore.id)}>
                         <div className="flex items-start gap-3">
                           <input type="checkbox" checked={chore.status === "Done"} className="mt-1" readOnly />
                           <div>
@@ -181,10 +194,10 @@ export default function HomePage() {
                 <CardContent className="p-0">
                   <div className="divide-y divide-slate-100">
                     {shopping.map((item, i) => (
-                      <div key={i} className="p-3 flex justify-between items-center text-sm">
+                      <div key={i} className="p-3 flex justify-between items-center text-sm cursor-pointer hover:bg-slate-50" onClick={() => toggleShopping(item.id)}>
                         <div className="flex items-center gap-2 text-slate-800">
-                          <input type="checkbox" />
-                          <span className="font-medium">{item.item}</span>
+                          <input type="checkbox" checked={item.checked} readOnly />
+                          <span className={`font-medium ${item.checked ? 'text-slate-400 line-through' : ''}`}>{item.item}</span>
                         </div>
                         <span className="text-xs text-slate-500 bg-slate-100 px-2 rounded">Qty: {item.quantity}</span>
                       </div>

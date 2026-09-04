@@ -7,50 +7,50 @@ export declare class EducationIntelligenceController {
         id: string;
         createdAt: Date;
         userId: string;
-        explanation: string | null;
         question: string;
         userAnswer: string | null;
         correctAnswer: string;
+        explanation: string | null;
     }>;
     getMistakeLogs(userId: string): Promise<{
         concept: string | null;
         id: string;
         createdAt: Date;
         userId: string;
-        explanation: string | null;
         question: string;
         userAnswer: string | null;
         correctAnswer: string;
+        explanation: string | null;
     }[]>;
     getMistakeLog(userId: string, id: string): Promise<{
         concept: string | null;
         id: string;
         createdAt: Date;
         userId: string;
-        explanation: string | null;
         question: string;
         userAnswer: string | null;
         correctAnswer: string;
+        explanation: string | null;
     }>;
     updateMistakeLog(userId: string, id: string, data: any): Promise<{
         concept: string | null;
         id: string;
         createdAt: Date;
         userId: string;
-        explanation: string | null;
         question: string;
         userAnswer: string | null;
         correctAnswer: string;
+        explanation: string | null;
     }>;
     deleteMistakeLog(userId: string, id: string): Promise<{
         concept: string | null;
         id: string;
         createdAt: Date;
         userId: string;
-        explanation: string | null;
         question: string;
         userAnswer: string | null;
         correctAnswer: string;
+        explanation: string | null;
     }>;
     createPracticeSession(userId: string, data: any): Promise<{
         topic: string;

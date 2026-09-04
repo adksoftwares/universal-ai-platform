@@ -7,6 +7,13 @@ import { useState } from "react";
 
 export default function HealthPage() {
   const [activeTab, setActiveTab] = useState("wellness");
+  const [symptoms, setSymptoms] = useState<string[]>([]);
+  const [steps, setSteps] = useState(6240);
+
+  const logSymptom = () => {
+    const newSymptoms = ["Mild Headache", "Fatigue", "Sore Throat"];
+    setSymptoms([...symptoms, newSymptoms[symptoms.length % 3]]);
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-20">
@@ -66,12 +73,12 @@ export default function HealthPage() {
                      <div>
                        <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Today's Progress</p>
                        <div className="flex justify-between items-end">
-                         <span className="text-2xl font-black text-slate-800">6,240 <span className="text-sm font-medium text-slate-500">steps</span></span>
+                         <span className="text-2xl font-black text-slate-800">{steps.toLocaleString()} <span className="text-sm font-medium text-slate-500">steps</span></span>
                          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">On Track</span>
                        </div>
                      </div>
                      <div className="pt-3 border-t border-slate-100">
-                       <Button variant="outline" className="w-full text-xs h-8">Log Workout</Button>
+                       <Button variant="outline" className="w-full text-xs h-8" onClick={() => setSteps(s => s + 2500)}>Log Workout (+2.5k steps)</Button>
                      </div>
                    </div>
                 </CardContent>
@@ -85,7 +92,13 @@ export default function HealthPage() {
                 </CardHeader>
                 <CardContent className="p-4">
                    <p className="text-xs text-slate-500 mb-4">Log symptoms privately to share with your provider at your next visit.</p>
-                   <Button size="sm" className="w-full bg-slate-900 text-white hover:bg-slate-800">Log New Symptom</Button>
+                   {symptoms.map((s, idx) => (
+                      <div key={idx} className="mb-2 p-2 bg-rose-50 rounded text-sm text-rose-900 border border-rose-100 flex justify-between items-center">
+                        <span>{s}</span>
+                        <span className="text-xs text-rose-500">Just now</span>
+                      </div>
+                   ))}
+                   <Button size="sm" className="w-full bg-slate-900 text-white hover:bg-slate-800" onClick={logSymptom}>Log New Symptom</Button>
                 </CardContent>
              </Card>
           </div>
