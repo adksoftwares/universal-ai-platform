@@ -3,10 +3,61 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Briefcase, FileText, Bot, FileCheck, CheckCircle2, AlertCircle, LayoutTemplate, MessageSquare, Target } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ApiClient } from "@/services/api";
 
 export default function CareerPage() {
   const [activeTab, setActiveTab] = useState("resume");
+  const [resumes, setResumes] = useState<any[]>([]);
+  const [applications, setApplications] = useState<any[]>([]);
+  const [interviews, setInterviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, [activeTab]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      if (activeTab === "resume") {
+        const res = await ApiClient.get('/career-tracker/resumes');
+        setResumes(res || []);
+      } else if (activeTab === "jobs") {
+        const res = await ApiClient.get('/career-tracker/applications');
+        setApplications(res || []);
+      } else if (activeTab === "interviews") {
+        const res = await ApiClient.get('/work-intelligence/interviews');
+        setInterviews(res || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createResume = async () => {
+    const title = prompt("Enter resume title:");
+    if (!title) return;
+    try {
+      const res = await ApiClient.post('/career-tracker/resumes', { title });
+      setResumes([...resumes, res]);
+    } catch (error) {
+      console.error("Failed to create resume", error);
+    }
+  };
+
+  const createApplication = async () => {
+    const company = prompt("Enter company name:");
+    if (!company) return;
+    try {
+      const res = await ApiClient.post('/career-tracker/applications', { company, status: "Applied", title: "Open Position" });
+      setApplications([...applications, res]);
+    } catch (error) {
+      console.error("Failed to create application", error);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-20">
@@ -23,7 +74,7 @@ export default function CareerPage() {
           <Button variant="outline" className="border-slate-200 bg-white text-slate-700">
              <Bot className="w-4 h-4 mr-2" /> Career Coach
           </Button>
-          <Button className="bg-sky-600 hover:bg-sky-700">
+          <Button className="bg-sky-600 hover:bg-sky-700" onClick={createApplication}>
              New Application
           </Button>
         </div>
@@ -66,30 +117,31 @@ export default function CareerPage() {
           <>
             <div className="lg:col-span-2 space-y-6">
               
+              <div className="flex justify-end mb-4">
+                <Button size="sm" onClick={createResume}>+ Create Resume</Button>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="border-sky-200 shadow-sm border-2">
-                   <CardContent className="p-4 flex flex-col gap-2">
-                     <div className="flex justify-between">
-                       <FileText className="w-6 h-6 text-sky-500" />
-                       <span className="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-0.5 rounded">Active</span>
-                     </div>
-                     <h3 className="font-bold text-slate-800">Software Engineer CV</h3>
-                     <p className="text-xs text-slate-500">Updated 2 days ago</p>
-                     <div className="mt-2 flex gap-2">
-                       <Button size="sm" variant="outline" className="flex-1 text-xs">Edit</Button>
-                       <Button size="sm" className="flex-1 bg-sky-600 text-xs">Tailor</Button>
-                     </div>
-                   </CardContent>
-                </Card>
-                <Card className="border-slate-200 shadow-sm hover:border-sky-200 cursor-pointer transition-colors">
-                   <CardContent className="p-4 flex flex-col gap-2">
-                     <div className="flex justify-between">
-                       <FileText className="w-6 h-6 text-slate-400" />
-                     </div>
-                     <h3 className="font-bold text-slate-800">Product Manager CV</h3>
-                     <p className="text-xs text-slate-500">Updated 1 month ago</p>
-                   </CardContent>
-                </Card>
+                {loading ? (
+                  <div className="col-span-2 text-center text-slate-500">Loading resumes...</div>
+                ) : resumes.length === 0 ? (
+                  <div className="col-span-2 text-center text-slate-500">Integration Required / No resumes found</div>
+                ) : resumes.map((resume, idx) => (
+                  <Card key={idx} className="border-sky-200 shadow-sm border-2">
+                     <CardContent className="p-4 flex flex-col gap-2">
+                       <div className="flex justify-between">
+                         <FileText className="w-6 h-6 text-sky-500" />
+                         <span className="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-0.5 rounded">Active</span>
+                       </div>
+                       <h3 className="font-bold text-slate-800">{resume.title || "Untitled CV"}</h3>
+                       <p className="text-xs text-slate-500">Updated recently</p>
+                       <div className="mt-2 flex gap-2">
+                         <Button size="sm" variant="outline" className="flex-1 text-xs">Edit</Button>
+                         <Button size="sm" className="flex-1 bg-sky-600 text-xs">Tailor</Button>
+                       </div>
+                     </CardContent>
+                  </Card>
+                ))}
               </div>
 
               {/* Portfolio */}
@@ -101,14 +153,7 @@ export default function CareerPage() {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="divide-y divide-slate-100">
-                    <div className="p-4 hover:bg-slate-50 transition-colors">
-                      <h4 className="font-bold text-slate-800 text-sm">Universal E-Commerce Platform</h4>
-                      <p className="text-xs text-slate-600 mt-1">Built a scalable platform using Next.js and NestJS handling 10k concurrent users.</p>
-                      <div className="mt-2 flex gap-2">
-                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">React</span>
-                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">Node.js</span>
-                      </div>
-                    </div>
+                    <div className="p-4 text-center text-slate-500">Integration Required</div>
                   </div>
                 </CardContent>
               </Card>
@@ -124,10 +169,10 @@ export default function CareerPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <p className="text-xs text-emerald-900/80 leading-relaxed">
-                    Paste a job description below to compare against your <strong>Software Engineer CV</strong>.
+                    Paste a job description below to compare against your CV.
                   </p>
                   <textarea className="w-full text-xs p-2 rounded border border-emerald-200 bg-white" rows={3} placeholder="Paste job description here..."></textarea>
-                  <Button size="sm" variant="outline" className="w-full bg-white border-emerald-200 text-emerald-700 hover:bg-emerald-100">
+                  <Button size="sm" variant="outline" className="w-full bg-white border-emerald-200 text-emerald-700 hover:bg-emerald-100" onClick={() => alert('Integration Required')}>
                     Run Analysis
                   </Button>
                 </CardContent>
@@ -146,20 +191,19 @@ export default function CareerPage() {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-slate-100">
-                  <div className="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center">
-                    <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Senior Frontend Engineer</h4>
-                      <p className="text-xs text-slate-600 mt-0.5">TechNova Solutions</p>
+                  {loading ? (
+                    <div className="p-4 text-center text-slate-500">Loading applications...</div>
+                  ) : applications.length === 0 ? (
+                    <div className="p-4 text-center text-slate-500">Integration Required / No applications found</div>
+                  ) : applications.map((app, idx) => (
+                    <div key={idx} className="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center">
+                      <div>
+                        <h4 className="font-bold text-slate-800 text-sm">{app.title || "Position"}</h4>
+                        <p className="text-xs text-slate-600 mt-0.5">{app.company || "Company"}</p>
+                      </div>
+                      <span className="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-1 rounded border border-sky-200">{app.status || "Applied"}</span>
                     </div>
-                    <span className="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-1 rounded border border-sky-200">Screening</span>
-                  </div>
-                  <div className="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center">
-                    <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Full Stack Developer</h4>
-                      <p className="text-xs text-slate-600 mt-0.5">InnovateCorp</p>
-                    </div>
-                    <span className="bg-fuchsia-100 text-fuchsia-700 text-xs font-bold px-2 py-1 rounded border border-fuchsia-200">Interview</span>
-                  </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -179,7 +223,14 @@ export default function CareerPage() {
                    <p className="text-sm text-slate-600 max-w-md mx-auto">
                      Select an active job application to generate role-specific practice questions or start a mock technical interview with the AI.
                    </p>
-                   <Button className="bg-fuchsia-600 hover:bg-fuchsia-700">Start Mock Interview</Button>
+                   {loading ? (
+                     <div className="text-sm text-slate-500">Loading interviews...</div>
+                   ) : interviews.length === 0 ? (
+                     <div className="text-sm text-slate-500">Integration Required / No interviews found</div>
+                   ) : (
+                     <div className="text-sm text-slate-500">Interviews found: {interviews.length}</div>
+                   )}
+                   <Button className="bg-fuchsia-600 hover:bg-fuchsia-700" onClick={() => alert('Integration Required')}>Start Mock Interview</Button>
                 </CardContent>
              </Card>
           </div>
