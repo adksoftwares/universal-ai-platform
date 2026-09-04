@@ -5,22 +5,45 @@ import { Button } from "@/components/ui/button";
 import { ActionProposal } from "@/components/common/ActionProposal";
 import { Mic, Paperclip, Send, Settings, Search, Plus, MessageSquare, Copy, RotateCcw, ThumbsUp, ThumbsDown } from "lucide-react";
 
-const mockHistory = [
-  { id: "1", title: "Project Alpha Planning", time: "2h ago" },
-  { id: "2", title: "Grocery List", time: "Yesterday" },
-  { id: "3", title: "Python Learning Goal", time: "Aug 28" },
-];
-
 type Message = { id: number; role: "user" | "assistant"; content: string };
+type ChatSession = { id: string; title: string; updatedAt: number; messages: Message[] };
 
 export default function AIAssistantPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, role: "assistant", content: "Hello! I'm ready to help. What's on your mind today?" },
-  ]);
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string>("");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState<number | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Load from local storage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("ai_chat_sessions");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as ChatSession[];
+        if (parsed.length > 0) {
+          setSessions(parsed);
+          setCurrentSessionId(parsed[0].id);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse chat sessions", e);
+      }
+    }
+    // Default if nothing saved
+    handleNewChat(false);
+  }, []);
+
+  // Save to local storage whenever sessions change
+  useEffect(() => {
+    if (sessions.length > 0) {
+      localStorage.setItem("ai_chat_sessions", JSON.stringify(sessions));
+    }
+  }, [sessions]);
+
+  const currentSession = sessions.find(s => s.id === currentSessionId);
+  const messages = currentSession ? currentSession.messages : [];
 
   // Auto scroll to bottom on new message
   useEffect(() => {
@@ -28,11 +51,26 @@ export default function AIAssistantPage() {
   }, [messages, isLoading]);
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !currentSessionId) return;
 
     const userMessage: Message = { id: Date.now(), role: "user", content: input.trim() };
     const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    
+    // Auto-generate title if it's the first real user message
+    let newTitle = currentSession?.title;
+    if (updatedMessages.length === 2 && newTitle === "New Chat") {
+      newTitle = input.trim().substring(0, 30) + (input.length > 30 ? "..." : "");
+    }
+
+    const updateSession = (newMsgs: Message[], title: string) => {
+      setSessions(prev => prev.map(s => 
+        s.id === currentSessionId 
+          ? { ...s, messages: newMsgs, updatedAt: Date.now(), title } 
+          : s
+      ));
+    };
+
+    updateSession(updatedMessages, newTitle || "Chat");
     setInput("");
     setIsLoading(true);
 
@@ -46,24 +84,24 @@ export default function AIAssistantPage() {
       const data = await res.json();
 
       if (data.error) {
-        setMessages([...updatedMessages, {
+        updateSession([...updatedMessages, {
           id: Date.now() + 1,
           role: "assistant",
           content: `Error: ${data.error} ${data.details ? `(${data.details})` : ""}`,
-        }]);
+        }], newTitle || "Chat");
       } else {
-        setMessages([...updatedMessages, {
+        updateSession([...updatedMessages, {
           id: Date.now() + 1,
           role: "assistant",
           content: data.reply,
-        }]);
+        }], newTitle || "Chat");
       }
     } catch {
-      setMessages([...updatedMessages, {
+      updateSession([...updatedMessages, {
         id: Date.now() + 1,
         role: "assistant",
         content: "Network error. Please check your connection and try again.",
-      }]);
+      }], newTitle || "Chat");
     } finally {
       setIsLoading(false);
     }
@@ -75,9 +113,25 @@ export default function AIAssistantPage() {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const handleNewChat = () => {
-    setMessages([{ id: Date.now(), role: "assistant", content: "Hello! I'm ready to help. What's on your mind today?" }]);
+  const handleNewChat = (saveState: boolean = true) => {
+    const newSession: ChatSession = {
+      id: Date.now().toString(),
+      title: "New Chat",
+      updatedAt: Date.now(),
+      messages: [{ id: Date.now(), role: "assistant", content: "Hello! I'm ready to help. What's on your mind today?" }]
+    };
+    if (saveState) {
+      setSessions(prev => [newSession, ...prev]);
+    } else {
+      setSessions([newSession]);
+    }
+    setCurrentSessionId(newSession.id);
     setInput("");
+  };
+
+  const formatTime = (ts: number) => {
+    const date = new Date(ts);
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   };
 
   return (
@@ -87,7 +141,7 @@ export default function AIAssistantPage() {
       <div className="w-64 border-r border-slate-200 bg-slate-50 hidden md:flex flex-col">
         <div className="p-4 border-b border-slate-200">
           <Button
-            onClick={handleNewChat}
+            onClick={() => handleNewChat(true)}
             className="w-full justify-start bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
             variant="outline"
           >
@@ -107,13 +161,17 @@ export default function AIAssistantPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-2 space-y-1">
-          {mockHistory.map((chat) => (
-            <button key={chat.id} className="w-full text-left px-3 py-2 rounded-md hover:bg-slate-200/50 transition-colors group">
+          {sessions.sort((a, b) => b.updatedAt - a.updatedAt).map((chat) => (
+            <button 
+              key={chat.id} 
+              onClick={() => setCurrentSessionId(chat.id)}
+              className={`w-full text-left px-3 py-2 rounded-md transition-colors group ${currentSessionId === chat.id ? "bg-slate-200/70" : "hover:bg-slate-200/50"}`}
+            >
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
-                <span className="text-sm font-medium text-slate-700 truncate">{chat.title}</span>
+                <MessageSquare className={`w-4 h-4 ${currentSessionId === chat.id ? "text-blue-600" : "text-slate-400 group-hover:text-slate-600"}`} />
+                <span className={`text-sm font-medium truncate ${currentSessionId === chat.id ? "text-slate-900" : "text-slate-700"}`}>{chat.title}</span>
               </div>
-              <span className="text-xs text-slate-400 pl-6">{chat.time}</span>
+              <span className="text-[10px] text-slate-400 pl-6">{formatTime(chat.updatedAt)}</span>
             </button>
           ))}
         </div>
