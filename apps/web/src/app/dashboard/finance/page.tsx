@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Wallet, Plus, TrendingUp, TrendingDown, Receipt, Target, BellRing, Sparkles, Building, Link2, CreditCard, AlertTriangle, ShieldCheck, Calculator, PieChart, Coins, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { useUserPreferences } from "@/lib/UserPreferencesContext";
@@ -46,8 +48,34 @@ export default function FinancePage() {
     toast.success("Transaction Verified", { description: "Thanks for confirming. The AI will learn this spending pattern." });
   };
 
-  const handleAddTransaction = () => {
-    toast.success("Add Transaction", { description: "Manual transaction entry modal would open here." });
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [txAmount, setTxAmount] = useState("");
+  const [txDesc, setTxDesc] = useState("");
+  const [txAccount, setTxAccount] = useState("Checking Account");
+  const [txType, setTxType] = useState("Expense");
+
+  const submitTransaction = () => {
+    if (!txAmount || isNaN(Number(txAmount))) {
+      toast.error("Invalid amount");
+      return;
+    }
+    const amt = Number(txAmount);
+    
+    setAccounts(accounts.map(acc => {
+      if (acc.name === txAccount) {
+        // If it's an expense, balance goes down (or debt goes up for credit)
+        // If it's income, balance goes up
+        const isExpense = txType === "Expense";
+        const newBalance = isExpense ? acc.balance - amt : acc.balance + amt;
+        return { ...acc, balance: newBalance };
+      }
+      return acc;
+    }));
+
+    toast.success("Transaction Added", { description: `Successfully logged ${formatMoney(amt)} to ${txAccount}.` });
+    setIsTxModalOpen(false);
+    setTxAmount("");
+    setTxDesc("");
   };
 
   const netWorth = {
@@ -92,9 +120,62 @@ export default function FinancePage() {
           <Button variant="outline" className="flex-1 sm:flex-none border-slate-200 bg-white text-slate-700" onClick={() => toast("Bank Sync", { description: "Plaid integration mock opened." })}>
             <Link2 className="w-4 h-4 mr-2" /> Link Bank
           </Button>
-          <Button className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700" onClick={handleAddTransaction}>
-            <Plus className="w-4 h-4 mr-2" /> Add Transaction
-          </Button>
+            <Dialog open={isTxModalOpen} onOpenChange={setIsTxModalOpen}>
+              <DialogTrigger render={<Button className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700" />}>
+                <Plus className="w-4 h-4 mr-2" /> Add Transaction
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Add Transaction</DialogTitle>
+                  <DialogDescription>
+                    Log a manual expense or income to your accounts.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label className="text-right text-sm font-medium">Type</label>
+                    <select 
+                      className="col-span-3 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      value={txType} onChange={e => setTxType(e.target.value)}
+                    >
+                      <option>Expense</option>
+                      <option>Income</option>
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label className="text-right text-sm font-medium">Amount</label>
+                    <Input 
+                      type="number" 
+                      placeholder="0.00" 
+                      className="col-span-3" 
+                      value={txAmount} 
+                      onChange={e => setTxAmount(e.target.value)} 
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label className="text-right text-sm font-medium">Account</label>
+                    <select 
+                      className="col-span-3 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      value={txAccount} onChange={e => setTxAccount(e.target.value)}
+                    >
+                      {accounts.map(acc => <option key={acc.name}>{acc.name}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label className="text-right text-sm font-medium">Memo</label>
+                    <Input 
+                      placeholder="Coffee, Groceries, etc." 
+                      className="col-span-3" 
+                      value={txDesc} 
+                      onChange={e => setTxDesc(e.target.value)} 
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="button" onClick={submitTransaction}>Save Transaction</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
         </div>
       </div>
 
