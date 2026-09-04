@@ -18,10 +18,16 @@ export async function POST(req: NextRequest) {
     });
 
     // Build chat history (exclude the last user message — that's the current prompt)
-    const history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
+    let history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
       role: m.role === "user" ? "user" : "model",
       parts: [{ text: m.content }],
     }));
+
+    // Gemini API STRICTLY requires the history to start with a 'user' message.
+    // Our frontend starts with a greeting (model), so we must strip any leading model messages.
+    while (history.length > 0 && history[0].role === "model") {
+      history.shift();
+    }
 
     const chat = model.startChat({ history });
 
