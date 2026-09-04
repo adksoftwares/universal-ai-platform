@@ -7,12 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Plus, Upload, Filter, MoreHorizontal, File, FileCode, Image as ImageIcon, Search } from "lucide-react";
 
 // Mock Documents
-const mockDocuments = [
-  { id: "1", filename: "Employment_Contract_2026.pdf", category: "Employment", size: "2.4 MB", date: "Aug 30", status: "ready" },
-  { id: "2", filename: "Tax_Return_2025.pdf", category: "Finance", size: "4.1 MB", date: "Aug 29", status: "ready" },
-  { id: "3", filename: "Passport_Scan.jpg", category: "Government", size: "1.2 MB", date: "Aug 25", status: "ready" },
-  { id: "4", filename: "Medical_Bill.pdf", category: "Other", size: "0.5 MB", date: "Just now", status: "processing" },
-];
+const mockDocuments: any[] = [];
 
 export default function DocumentsPage() {
   const [isUploading, setIsUploading] = useState(false);
@@ -76,40 +71,53 @@ export default function DocumentsPage() {
         </div>
       </div>
 
-      {/* Document Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {mockDocuments.map(doc => (
-          <Link href={`/dashboard/documents/${doc.id}`} key={doc.id}>
-            <Card className="border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-indigo-300 group h-full flex flex-col">
-              <CardContent className="p-5 flex flex-col h-full">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-indigo-50 transition-colors">
-                    {getFileIcon(doc.filename)}
+      {/* Document Grid / Empty State */}
+      {mockDocuments.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-12 bg-slate-50 border border-slate-200 border-dashed rounded-xl text-center">
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+            <FileText className="w-8 h-8 text-slate-300" />
+          </div>
+          <h3 className="text-lg font-semibold text-slate-800 mb-1">No documents yet</h3>
+          <p className="text-slate-500 mb-4">Upload your first document to get started.</p>
+          <Button className="bg-indigo-600" onClick={() => setIsUploading(true)}>
+            <Upload className="w-4 h-4 mr-2" /> Upload Document
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {mockDocuments.map(doc => (
+            <Link href={`/dashboard/documents/${doc.id}`} key={doc.id}>
+              <Card className="border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-indigo-300 group h-full flex flex-col">
+                <CardContent className="p-5 flex flex-col h-full">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-indigo-50 transition-colors">
+                      {getFileIcon(doc.filename)}
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-800 -mr-2 -mt-2">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-800 -mr-2 -mt-2">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
-                </div>
-                
-                <h3 className="font-semibold text-slate-800 text-sm truncate mb-1 group-hover:text-indigo-700 transition-colors" title={doc.filename}>
-                  {doc.filename}
-                </h3>
-                
-                <div className="mt-auto pt-4 flex flex-wrap gap-2 items-center text-xs">
-                  <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">{doc.category}</span>
-                  {doc.status === 'processing' ? (
-                    <span className="bg-amber-50 text-amber-600 px-2 py-1 rounded-md font-medium flex items-center">
-                      <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping mr-1.5"></div> Processing
-                    </span>
-                  ) : (
-                    <span className="text-slate-400">{doc.date}</span>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+                  
+                  <h3 className="font-semibold text-slate-800 text-sm truncate mb-1 group-hover:text-indigo-700 transition-colors" title={doc.filename}>
+                    {doc.filename}
+                  </h3>
+                  
+                  <div className="mt-auto pt-4 flex flex-wrap gap-2 items-center text-xs">
+                    <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">{doc.category}</span>
+                    {doc.status === 'processing' ? (
+                      <span className="bg-amber-50 text-amber-600 px-2 py-1 rounded-md font-medium flex items-center">
+                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping mr-1.5"></div> Processing
+                      </span>
+                    ) : (
+                      <span className="text-slate-400">{doc.date}</span>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
 
     </div>
   );

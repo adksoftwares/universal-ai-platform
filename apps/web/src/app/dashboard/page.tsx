@@ -110,9 +110,7 @@ export default function EnhancedDashboardPage() {
               <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full font-medium">3 Pending</span>
             </div>
             <ul className="space-y-3">
-              <TaskItem title="Review Q3 Report" priority="High" />
-              <TaskItem title="Submit expense receipts" priority="Medium" />
-              <TaskItem title="Call dentist for appointment" priority="Low" />
+              <div className="text-sm text-slate-500 py-4 text-center">No tasks for today. Enjoy your day!</div>
             </ul>
           </CardContent>
         </Card>
@@ -126,8 +124,7 @@ export default function EnhancedDashboardPage() {
               </h3>
             </div>
             <ul className="space-y-3">
-              <ReminderItem title="Team Standup" time="10:00 AM" />
-              <ReminderItem title="Water plants" time="5:00 PM" />
+              <div className="text-sm text-slate-500 py-4 text-center">No upcoming reminders.</div>
             </ul>
           </CardContent>
         </Card>
@@ -140,19 +137,7 @@ export default function EnhancedDashboardPage() {
                 <BookOpen className="h-5 w-5 text-indigo-500" /> Today's Learning
               </h3>
             </div>
-            <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-              <p className="text-sm font-semibold text-indigo-900 mb-1">Python Functions</p>
-              <p className="text-xs text-indigo-700/80 mb-3">Est. 30 mins remaining</p>
-              <Link href="/dashboard/learning">
-                <Button size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700 h-8 text-xs">
-                  Resume Study
-                </Button>
-              </Link>
-            </div>
-            <div className="flex justify-between items-center pt-2">
-               <span className="text-xs font-medium text-slate-500">Career Goal</span>
-               <span className="text-xs font-semibold text-blue-600">Senior Dev</span>
-            </div>
+            <div className="text-sm text-slate-500 py-4 text-center">No learning goals scheduled for today.</div>
           </CardContent>
         </Card>
 
@@ -165,14 +150,7 @@ export default function EnhancedDashboardPage() {
               </h3>
             </div>
             <div className="space-y-3">
-              <div className="p-3 rounded-xl border border-rose-100 bg-rose-50 flex justify-between items-center">
-                 <span className="text-sm font-medium text-rose-800">Electricity Bill</span>
-                 <span className="text-xs font-bold text-rose-600">Due Tomorrow</span>
-              </div>
-              <div className="p-3 rounded-xl border border-emerald-100 bg-emerald-50 flex justify-between items-center">
-                 <span className="text-sm font-medium text-emerald-800">Front Door</span>
-                 <span className="text-xs font-bold text-emerald-600">Locked</span>
-              </div>
+              <div className="text-sm text-slate-500 py-4 text-center">No alerts for home or finance.</div>
             </div>
           </CardContent>
         </Card>
