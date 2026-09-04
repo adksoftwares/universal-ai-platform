@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Globe, Lock, CheckCircle2, Shield, Eye, ArrowRight, User, Calendar, MessageSquare, Briefcase, Plane, Home, GraduationCap, Wallet } from "lucide-react";
 
@@ -75,7 +75,7 @@ export default function LandingPage() {
               <div className="flex items-center space-x-3 mb-8 pb-4 border-b border-slate-100">
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-playfair italic text-xl">S</div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Sophia</h3>
+                  <h3 className="font-semibold text-slate-900">AI Assistant</h3>
                   <p className="text-xs text-slate-500">Universal Assistant</p>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function LandingPage() {
 
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-8 flex items-center text-slate-400 text-sm">
                 <MessageSquare className="w-4 h-4 mr-3 opacity-50" />
-                Ask Sophia anything...
+                Ask AI Assistant anything...
               </div>
 
               <div className="space-y-6">
@@ -100,11 +100,11 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-start text-sm text-slate-700">
                       <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mt-1.5 mr-3 shrink-0"></div>
-                      Study Physics — 7:00 PM
+                      Study Physics â€” 7:00 PM
                     </li>
                     <li className="flex items-start text-sm text-slate-700">
                       <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 mr-3 shrink-0"></div>
-                      Pay electricity bill — due tomorrow
+                      Pay electricity bill â€” due tomorrow
                     </li>
                   </ul>
                 </div>
@@ -114,7 +114,7 @@ export default function LandingPage() {
                   <div className="bg-white border border-slate-100 rounded-lg p-3 shadow-sm flex items-center">
                     <Calendar className="w-5 h-5 text-blue-500 mr-3" />
                     <div>
-                      <p className="text-sm font-medium text-slate-900">Tomorrow — 10:00 AM</p>
+                      <p className="text-sm font-medium text-slate-900">Tomorrow â€” 10:00 AM</p>
                       <p className="text-xs text-slate-500">Meeting with team</p>
                     </div>
                   </div>
@@ -134,7 +134,7 @@ export default function LandingPage() {
             <div className="text-center max-w-2xl mx-auto mb-20">
               <h2 className="font-playfair text-4xl lg:text-5xl text-slate-900 mb-6 tracking-tight">One assistant. <br/> Many parts of life.</h2>
               <p className="text-lg text-slate-600 font-light">
-                Sophia brings everyday tasks, information, planning, learning and communication into one intelligent experience. Get things done without jumping between apps.
+                AI Assistant brings everyday tasks, information, planning, learning and communication into one intelligent experience. Get things done without jumping between apps.
               </p>
             </div>
 
@@ -188,26 +188,26 @@ export default function LandingPage() {
         {/* HOW IT WORKS */}
         <section id="how-it-works" className="py-24 bg-[#FAFAFA]">
           <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
-            <h2 className="font-playfair text-3xl lg:text-4xl text-slate-900 mb-16 tracking-tight text-center">How Sophia Works</h2>
+            <h2 className="font-playfair text-3xl lg:text-4xl text-slate-900 mb-16 tracking-tight text-center">How AI Assistant Works</h2>
             
             <div className="grid md:grid-cols-3 gap-12 lg:gap-16">
               
               <div className="flex flex-col">
                 <span className="text-slate-300 font-playfair text-5xl mb-6">01</span>
                 <h3 className="text-xl font-medium text-slate-900 mb-3">Ask</h3>
-                <p className="text-slate-600 font-light leading-relaxed">Tell Sophia what you need using natural language. It understands nuance, intent, and complex requests across domains.</p>
+                <p className="text-slate-600 font-light leading-relaxed">Tell AI Assistant what you need using natural language. It understands nuance, intent, and complex requests across domains.</p>
               </div>
 
               <div className="flex flex-col">
                 <span className="text-slate-300 font-playfair text-5xl mb-6">02</span>
                 <h3 className="text-xl font-medium text-slate-900 mb-3">Understand</h3>
-                <p className="text-slate-600 font-light leading-relaxed">Sophia securely retrieves relevant context from your connected life—your calendar, preferences, and documents—without exposing private memory.</p>
+                <p className="text-slate-600 font-light leading-relaxed">AI Assistant securely retrieves relevant context from your connected lifeâ€”your calendar, preferences, and documentsâ€”without exposing private memory.</p>
               </div>
 
               <div className="flex flex-col">
                 <span className="text-slate-300 font-playfair text-5xl mb-6">03</span>
                 <h3 className="text-xl font-medium text-slate-900 mb-3">Act</h3>
-                <p className="text-slate-600 font-light leading-relaxed">Sophia prepares the solution, drafts the message, or plans the route, and always asks for your confirmation before taking important actions.</p>
+                <p className="text-slate-600 font-light leading-relaxed">AI Assistant prepares the solution, drafts the message, or plans the route, and always asks for your confirmation before taking important actions.</p>
               </div>
 
             </div>
@@ -220,7 +220,7 @@ export default function LandingPage() {
             <div>
               <h2 className="font-playfair text-4xl lg:text-5xl mb-6 tracking-tight">Your life belongs <br/> to you.</h2>
               <p className="text-slate-400 text-lg font-light leading-relaxed mb-8">
-                Sophia is designed around privacy, user control, and transparent permissions. The system acts as a trusted companion, never taking silent control.
+                AI Assistant is designed around privacy, user control, and transparent permissions. The system acts as a trusted companion, never taking silent control.
               </p>
               <div className="space-y-6">
                 <div className="flex items-start">
@@ -234,7 +234,7 @@ export default function LandingPage() {
                   <Eye className="w-5 h-5 text-slate-500 mr-4 mt-0.5" />
                   <div>
                     <h4 className="font-medium text-slate-200 mb-1">User Control</h4>
-                    <p className="text-sm text-slate-400">View, edit, or delete the memory Sophia holds about you at any time.</p>
+                    <p className="text-sm text-slate-400">View, edit, or delete the memory AI Assistant holds about you at any time.</p>
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -272,7 +272,7 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-              {['English', 'தமிழ்', 'සිංහල', 'العربية', 'Español', 'Français', 'Deutsch', 'हिन्दी', '中文', '日本語'].map((lang, i) => (
+              {['English', 'à®¤à®®à®¿à®´à¯', 'à·ƒà·’à¶‚à·„à¶½', 'Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©', 'EspaÃ±ol', 'FranÃ§ais', 'Deutsch', 'à¤¹à¤¿à¤¨à¥à¤¦à¥€', 'ä¸­æ–‡', 'æ—¥æœ¬èªž'].map((lang, i) => (
                 <span 
                   key={lang} 
                   className="px-6 py-3 rounded-full border border-slate-200 text-slate-600 text-lg hover:border-slate-400 hover:text-slate-900 transition-colors cursor-default"

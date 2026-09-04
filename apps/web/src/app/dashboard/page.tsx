@@ -64,7 +64,7 @@ export default function EnhancedDashboardPage() {
                 className="pl-11 pr-24 py-6 text-base md:text-lg rounded-2xl shadow-sm border-slate-300 focus-visible:ring-blue-500 transition-all bg-white"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    alert(`Sophia AI: Analyzing your request "${e.currentTarget.value}"... (Simulated Action)`);
+                    alert(`AI Assistant: Analyzing your request "${e.currentTarget.value}"... (Simulated Action)`);
                     e.currentTarget.value = "";
                   }
                 }}
@@ -78,7 +78,7 @@ export default function EnhancedDashboardPage() {
                 </Button>
                 <Button size="sm" className="h-10 rounded-xl px-4 bg-blue-600 hover:bg-blue-700" onClick={(e) => {
                   const input = e.currentTarget.parentElement?.parentElement?.querySelector('input');
-                  alert(`Sophia AI: Processing "${input?.value || 'empty request'}"... (Simulated Action)`);
+                  alert(`AI Assistant: Processing "${input?.value || 'empty request'}"... (Simulated Action)`);
                   if (input) input.value = "";
                 }}>
                   Send
@@ -186,7 +186,7 @@ function QuickActionBadge({ label }: { label: string }) {
   return (
     <button 
       className="text-xs md:text-sm font-medium bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
-      onClick={() => alert(`Sophia AI: Initiating workflow for "${label}"...`)}
+      onClick={() => alert(`AI Assistant: Initiating workflow for "${label}"...`)}
     >
       {label}
     </button>
