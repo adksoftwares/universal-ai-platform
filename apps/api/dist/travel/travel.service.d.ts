@@ -24,9 +24,9 @@ export declare class TravelService {
             notes: string | null;
             date: Date;
             time: string | null;
-            location: string | null;
-            activity: string;
             tripId: string;
+            activity: string;
+            location: string | null;
             estimatedCost: number | null;
         }[];
         checklists: {
@@ -60,9 +60,9 @@ export declare class TravelService {
             notes: string | null;
             date: Date;
             time: string | null;
-            location: string | null;
-            activity: string;
             tripId: string;
+            activity: string;
+            location: string | null;
             estimatedCost: number | null;
         }[];
         checklists: {

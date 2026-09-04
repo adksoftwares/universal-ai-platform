@@ -11,8 +11,8 @@ export declare class LearningController {
                 createdAt: Date;
                 updatedAt: Date;
                 status: string;
-                order: number;
                 learningPlanId: string;
+                order: number;
             }[];
         } & {
             id: string;
@@ -43,8 +43,8 @@ export declare class LearningController {
                 createdAt: Date;
                 updatedAt: Date;
                 status: string;
-                order: number;
                 learningPlanId: string;
+                order: number;
             }[];
         } & {
             id: string;
@@ -75,8 +75,8 @@ export declare class LearningController {
                 createdAt: Date;
                 updatedAt: Date;
                 status: string;
-                order: number;
                 learningPlanId: string;
+                order: number;
             }[];
         } & {
             id: string;
@@ -107,8 +107,8 @@ export declare class LearningController {
                 createdAt: Date;
                 updatedAt: Date;
                 status: string;
-                order: number;
                 learningPlanId: string;
+                order: number;
             }[];
         } & {
             id: string;

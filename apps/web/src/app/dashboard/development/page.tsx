@@ -17,7 +17,7 @@ export default function DevelopmentPage() {
   const fetchHabits = async () => {
     try {
       setLoading(true);
-      const res = await ApiClient.get('/development/habits');
+      const res = await ApiClient.get<any[]>('/development/habits');
       setHabits(res || []);
     } catch (error) {
       console.error("Failed to fetch habits", error);

@@ -138,11 +138,11 @@ export default function FinancePage() {
             <Link2 className="w-4 h-4 mr-2" /> Link Bank
           </Button>
             <Dialog open={isTxModalOpen} onOpenChange={setIsTxModalOpen}>
-              <DialogTrigger asChild>
+              <DialogTrigger render={
                  <Button className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700">
                    <Plus className="w-4 h-4 mr-2" /> Add Transaction
                  </Button>
-              </DialogTrigger>
+              } />
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>Add Transaction</DialogTitle>

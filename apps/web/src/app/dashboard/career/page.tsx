@@ -21,13 +21,13 @@ export default function CareerPage() {
     setLoading(true);
     try {
       if (activeTab === "resume") {
-        const res = await ApiClient.get('/career-tracker/resumes');
+        const res = await ApiClient.get<any[]>('/career-tracker/resumes');
         setResumes(res || []);
       } else if (activeTab === "jobs") {
-        const res = await ApiClient.get('/career-tracker/applications');
+        const res = await ApiClient.get<any[]>('/career-tracker/applications');
         setApplications(res || []);
       } else if (activeTab === "interviews") {
-        const res = await ApiClient.get('/work-intelligence/interviews');
+        const res = await ApiClient.get<any[]>('/work-intelligence/interviews');
         setInterviews(res || []);
       }
     } catch (error) {

@@ -60,5 +60,23 @@ export class ApiClient {
     });
   }
 
+  static async put<T>(endpoint: string, data: any) {
+    return this.fetch<T>(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  static async patch<T>(endpoint: string, data: any) {
+    return this.fetch<T>(endpoint, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  static async delete<T>(endpoint: string) {
+    return this.fetch<T>(endpoint, { method: 'DELETE' });
+  }
+
   // Auth, Profile, and other service layers will use this Client
 }

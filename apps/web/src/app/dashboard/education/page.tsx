@@ -21,7 +21,7 @@ export default function EducationPage() {
   const fetchCourses = async () => {
     try {
       setLoadingCourses(true);
-      const res = await ApiClient.get('/learning-intelligence/topic');
+      const res = await ApiClient.get<any[]>('/learning-intelligence/topic');
       setCourses(res || []);
     } catch (error) {
       console.error("Failed to fetch courses", error);
@@ -33,7 +33,7 @@ export default function EducationPage() {
   const fetchFlashcards = async () => {
     try {
       setLoadingFlashcards(true);
-      const res = await ApiClient.get('/learning-intelligence/flashcard');
+      const res = await ApiClient.get<any[]>('/learning-intelligence/flashcard');
       setFlashcards(res || []);
     } catch (error) {
       console.error("Failed to fetch flashcards", error);
