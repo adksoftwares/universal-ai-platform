@@ -52,8 +52,8 @@ export declare class HealthService {
         notes: string | null;
         date: Date;
         status: string;
-        provider: string;
         location: string | null;
+        provider: string;
     }[]>;
     createAppointment(userId: string, data: any): import(".prisma/client").Prisma.Prisma__HealthAppointmentClient<{
         id: string;
@@ -63,8 +63,8 @@ export declare class HealthService {
         notes: string | null;
         date: Date;
         status: string;
-        provider: string;
         location: string | null;
+        provider: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs>;
     updateAppointment(userId: string, id: string, data: any): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;
     deleteAppointment(userId: string, id: string): import(".prisma/client").Prisma.PrismaPromise<import(".prisma/client").Prisma.BatchPayload>;

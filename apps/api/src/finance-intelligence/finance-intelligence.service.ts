@@ -192,8 +192,8 @@ export class FinanceIntelligenceService {
     const assets = await this.prisma.asset.findMany({ where: { userId } });
     const loans = await this.prisma.loan.findMany({ where: { userId } });
 
-    const totalAssets = assets.reduce((sum, asset) => sum + (asset.currentValue || 0), 0);
-    const totalLiabilities = loans.reduce((sum, loan) => sum + (loan.remainingBalance || 0), 0);
+    const totalAssets = assets.reduce((sum: number, asset: any) => sum + (asset.currentValue || 0), 0);
+    const totalLiabilities = loans.reduce((sum: number, loan: any) => sum + (loan.remainingBalance || 0), 0);
     const netWorth = totalAssets - totalLiabilities;
 
     return this.prisma.netWorthSnapshot.create({
