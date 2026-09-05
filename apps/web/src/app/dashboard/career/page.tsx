@@ -22,16 +22,16 @@ export default function CareerPage() {
     try {
       if (activeTab === "resume") {
         const res = await ApiClient.get<any[]>('/career-tracker/resumes');
-        setResumes(res || []);
+        setResumes(Array.isArray(res) ? res : []);
       } else if (activeTab === "jobs") {
         const res = await ApiClient.get<any[]>('/career-tracker/applications');
-        setApplications(res || []);
+        setApplications(Array.isArray(res) ? res : []);
       } else if (activeTab === "interviews") {
         const res = await ApiClient.get<any[]>('/work-intelligence/interviews');
-        setInterviews(res || []);
+        setInterviews(Array.isArray(res) ? res : []);
       }
     } catch (error) {
-      console.error("Failed to fetch data", error);
+      // backend not available — stay with empty arrays
     } finally {
       setLoading(false);
     }

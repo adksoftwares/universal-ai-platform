@@ -34,7 +34,6 @@ export class ApiClient {
       
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
-          // If unauthorized, could redirect to login here if running in browser
           if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
             window.location.href = '/login';
           }
@@ -43,7 +42,12 @@ export class ApiClient {
       }
       
       return await response.json();
-    } catch (error) {
+    } catch (error: any) {
+      // Silently handle network errors (e.g. backend not deployed yet)
+      // "Failed to fetch" means the server is unreachable — not a code bug
+      if (error?.message === 'Failed to fetch' || error?.name === 'TypeError') {
+        return null as T;
+      }
       console.error(`[ApiClient Error] ${endpoint}:`, error);
       throw error;
     }

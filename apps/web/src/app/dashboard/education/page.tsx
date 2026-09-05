@@ -22,9 +22,9 @@ export default function EducationPage() {
     try {
       setLoadingCourses(true);
       const res = await ApiClient.get<any[]>('/learning-intelligence/topic');
-      setCourses(res || []);
+      setCourses(Array.isArray(res) ? res : []);
     } catch (error) {
-      console.error("Failed to fetch courses", error);
+      setCourses([]);
     } finally {
       setLoadingCourses(false);
     }
@@ -34,9 +34,9 @@ export default function EducationPage() {
     try {
       setLoadingFlashcards(true);
       const res = await ApiClient.get<any[]>('/learning-intelligence/flashcard');
-      setFlashcards(res || []);
+      setFlashcards(Array.isArray(res) ? res : []);
     } catch (error) {
-      console.error("Failed to fetch flashcards", error);
+      setFlashcards([]);
     } finally {
       setLoadingFlashcards(false);
     }
