@@ -10,10 +10,7 @@ import { COUNTRY_DATA } from "@/lib/countryData";
 export default function EmergencyPage() {
   const { preferences, setCountry } = useUserPreferences();
   
-  const contacts = [
-    { id: 1, name: "Jane Doe", relationship: "Sister", phone: "+1 (555) 019-2834" },
-    { id: 2, name: "Dr. Smith", relationship: "Primary Care", phone: "+1 (555) 992-1122" },
-  ];
+  const contacts: any[] = [];
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
@@ -51,20 +48,26 @@ export default function EmergencyPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-slate-100">
-              {contacts.map(c => (
-                <div key={c.id} className="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
-                  <div>
-                    <p className="font-bold text-slate-900 text-base">{c.name}</p>
-                    <p className="text-xs font-semibold text-slate-500 mt-0.5">{c.relationship}</p>
+            {contacts.length === 0 ? (
+              <div className="p-6 text-center text-slate-400 text-sm">
+                No trusted contacts added yet.
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {contacts.map(c => (
+                  <div key={c.id} className="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
+                    <div>
+                      <p className="font-bold text-slate-900 text-base">{c.name}</p>
+                      <p className="text-xs font-semibold text-slate-500 mt-0.5">{c.relationship}</p>
+                    </div>
+                    <Button className="bg-indigo-600 hover:bg-indigo-700 h-10 w-10 sm:w-auto sm:px-4 rounded-full sm:rounded-md p-0">
+                      <Phone className="w-4 h-4 sm:mr-2" />
+                      <span className="hidden sm:inline font-bold">Call</span>
+                    </Button>
                   </div>
-                  <Button className="bg-indigo-600 hover:bg-indigo-700 h-10 w-10 sm:w-auto sm:px-4 rounded-full sm:rounded-md p-0">
-                    <Phone className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline font-bold">Call</span>
-                  </Button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 

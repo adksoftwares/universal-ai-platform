@@ -40,7 +40,7 @@ export default function FinancePage() {
     loadData();
   }, []);
 
-  const [fraudAlert, setFraudAlert] = useState(true);
+  const [fraudAlert, setFraudAlert] = useState(false);
 
   const handlePayBill = async (id: string, amount: number) => {
     try {
@@ -107,11 +107,7 @@ export default function FinancePage() {
     get total() { return this.assets - this.liabilities; }
   };
 
-  const budget = [
-    { category: "Housing", spent: 1500, total: 1500, percentage: 100 },
-    { category: "Food & Dining", spent: 480, total: 600, percentage: 80 },
-    { category: "Transportation", spent: 120, total: 200, percentage: 60 }
-  ];
+  const budget: any[] = [];
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-20">

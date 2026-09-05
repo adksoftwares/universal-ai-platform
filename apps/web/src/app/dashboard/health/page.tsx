@@ -23,13 +23,11 @@ export default function HealthPage() {
       const activityRecords: any = await ApiClient.get('/health-intelligence/activity');
       const healthJournal: any = await ApiClient.get('/health-intelligence/journal');
       
-      const todaySteps = activityRecords.reduce((sum: number, r: any) => sum + (r.steps || 0), 0) || 6240;
+      const todaySteps = activityRecords.reduce((sum: number, r: any) => sum + (r.steps || 0), 0);
       setSteps(todaySteps);
       setSymptoms(healthJournal || []);
     } catch (e) {
       console.error(e);
-      // Fallback for mock view if backend unavailable
-      setSteps(6240);
     } finally {
       setLoading(false);
     }
@@ -169,23 +167,8 @@ export default function HealthPage() {
                    </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                   <div className="p-4 divide-y divide-slate-100">
-                      <div className="py-3 flex gap-3">
-                         <div className="w-1 bg-indigo-200 rounded-full"></div>
-                         <div>
-                           <p className="text-xs text-slate-500 font-bold uppercase">Oct 12</p>
-                           <p className="text-sm font-semibold text-slate-800">Annual Physical Checkup</p>
-                           <p className="text-xs text-slate-600 mt-1">Dr. Smith • All standard vitals normal.</p>
-                         </div>
-                      </div>
-                      <div className="py-3 flex gap-3">
-                         <div className="w-1 bg-emerald-200 rounded-full"></div>
-                         <div>
-                           <p className="text-xs text-slate-500 font-bold uppercase">Oct 14</p>
-                           <p className="text-sm font-semibold text-slate-800">Lab Results: Complete Blood Count</p>
-                           <Button variant="link" className="p-0 h-auto text-xs text-indigo-600 font-bold mt-1">View AI Explanation</Button>
-                         </div>
-                      </div>
+                   <div className="p-8 text-center text-slate-400 text-sm">
+                     No health records added yet. Upload documents or log appointments to get started.
                    </div>
                 </CardContent>
              </Card>
@@ -198,11 +181,11 @@ export default function HealthPage() {
                    </CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 space-y-4">
-                   <p className="text-sm text-slate-700">
-                     <strong>AI Educational Summary:</strong> The lab report shows your Hemoglobin is 14.5 g/dL, which falls within the standard reference range (13.8 - 17.2 g/dL). 
+                   <p className="text-sm text-slate-500 text-center py-4">
+                     Upload a health document to get a plain-language AI explanation.
                    </p>
                    <div className="bg-slate-100 text-slate-600 text-xs p-3 rounded">
-                     <strong>Safety Note:</strong> This information can have several possible explanations. A healthcare professional should interpret it in context. The AI cannot diagnose conditions or replace professional medical advice.
+                     <strong>Safety Note:</strong> AI explanations are educational only. A healthcare professional should interpret results in context. AI cannot diagnose conditions or replace professional medical advice.
                    </div>
                 </CardContent>
              </Card>
@@ -223,13 +206,8 @@ export default function HealthPage() {
                      Temporarily share specific health timelines, appointments, or medication schedules with a trusted caregiver. Access is automatically revoked after expiration.
                    </p>
                    
-                   <div className="border border-slate-200 rounded-lg p-3 flex justify-between items-center bg-white">
-                     <div>
-                       <p className="text-sm font-bold text-slate-800">Jane Doe (Spouse)</p>
-                       <p className="text-xs text-slate-500">Access: Medication List, Upcoming Appointments</p>
-                       <p className="text-xs text-rose-500 font-bold mt-1">Expires in 7 days</p>
-                     </div>
-                     <Button variant="outline" size="sm" className="border-rose-200 text-rose-700 hover:bg-rose-50">Revoke Now</Button>
+                   <div className="p-6 text-center text-slate-400 text-sm border border-dashed border-slate-200 rounded-lg">
+                     No caregivers added yet.
                    </div>
 
                    <Button className="w-full bg-slate-900 text-white hover:bg-slate-800">Grant Temporary Access</Button>
