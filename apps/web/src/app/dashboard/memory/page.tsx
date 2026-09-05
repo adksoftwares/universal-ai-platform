@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,9 @@ export default function MemoryPage() {
   const fetchMemories = async () => {
     try {
       const data = await ApiClient.get<Memory[]>('/memories');
-      setMemories(data);
+      setMemories(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Failed to fetch memories", error);
+      setMemories([]);
     } finally {
       setLoading(false);
     }

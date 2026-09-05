@@ -18,10 +18,10 @@ export default function TravelPage() {
           ApiClient.get('/travel-intelligence/bookings'),
           ApiClient.get('/travel-intelligence/saved-places')
         ]);
-        setItinerary((bookings as any[]) || []);
-        setSavedPlaces((places as any[]) || []);
+        setItinerary(Array.isArray(bookings) ? bookings : []);
+        setSavedPlaces(Array.isArray(places) ? places : []);
       } catch (err) {
-        console.error(err);
+        // backend unavailable
       } finally {
         setLoading(false);
       }

@@ -29,10 +29,10 @@ export default function FinancePage() {
           ApiClient.get('/finance-intelligence/accounts'),
           ApiClient.get('/finance-intelligence/subscriptions')
         ]);
-        setAccounts((accs as any[]) || []);
-        setBills((subs as any[]) || []);
+        setAccounts(Array.isArray(accs) ? accs : []);
+        setBills(Array.isArray(subs) ? subs : []);
       } catch (err) {
-        toast.error("Failed to load financial data");
+        // backend unavailable
       } finally {
         setLoading(false);
       }
